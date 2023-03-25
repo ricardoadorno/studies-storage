@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="script.js"></script>
+  </head>
+  <body>
+    <h1>Hello World</h1>
+    <select id="selector">
+      <option default value="en">English</option>
+      <option value="pt">Português</option>
+    </select>
+    <script>
+      const langSelector = document.querySelector("#selector");
+
+      function detectLang() {
+        var lang = navigator.languages;
+        lang.find((element) => {
+          if (element === "pt-BR" || element === "pt") {
+            window.location.href = "index-pt.html";
+          }
+        });
+      }
+
+      // load a function only when a specific page is loaded
+      if (window.location.href === "index.html") {
+        detectLang();
+      }
+
+      langSelector.addEventListener("change", changeLang);
+      // change index.html to index-pt.html with a input select
+      function changeLang() {
+        if (langSelector.value === "pt") {
+          window.location.href = "index-pt.html";
+        } else if (langSelector.value === "en") {
+          window.location.href = "index.html";
+        }
+      }
+    </script>
+  </body>
+</html>

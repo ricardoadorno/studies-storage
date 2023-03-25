@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Pico.css -->
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/@picocss/pico@1.*/css/pico.min.css"
+    />
+    <!-- Font Awesome -->
+    <script
+      src="https://kit.fontawesome.com/2c36e9b7b1.js"
+      crossorigin="anonymous"
+    ></script>
+
+    <title>Document</title>
+  </head>
+  <body>
+    <style>
+      li {
+        list-style: none;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #ccc;
+      }
+
+      .delete {
+        color: red;
+        cursor: pointer;
+        padding-left: 3rem;
+      }
+
+      .edit {
+        color: green;
+        cursor: pointer;
+        padding-left: 3rem;
+      }
+    </style>
+    <main class="container">
+      <section style="max-width: 50%">
+        <form>
+          <label for="name">Famous Books:</label>
+          <input
+            type="text"
+            name="name"
+            aria-label="name"
+            autocomplete="off"
+            placeholder="Add a new book"
+          />
+          <button type="submit">Add</button>
+        </form>
+      </section>
+      <ul id="list"></ul>
+    </main>
+    <script>
+      const form = document.querySelector("form");
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData);
+        fetch("/api", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        })
+          .then((res) => res.json())
+          .then((data) => console.log(data))
+          .then(() => location.reload());
+      });
+
+      fetch("http://localhost:3000/api")
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data);
+          let list = document.getElementById("list");
+          data.map((element, index) => {
+            let li = document.createElement("li");
+            let deleteIcon = document.createElement("i");
+            let editIcon = document.createElement("i");
+
+            deleteIcon.classList.add("fas", "fa-trash-alt", "delete");
+            editIcon.classList.add("fas", "fa-edit", "edit");
+
+            li.innerHTML = element;
+            list.appendChild(li);
+            li.appendChild(deleteIcon);
+            deleteIcon.addEventListener("click", () => {
+              fetch(`/api/${index}`, {
+                method: "DELETE",
+              })
+                .then((res) => res.json())
+                .then((data) => console.log(data))
+                .then(() => location.reload());
+            });
+
+            li.appendChild(editIcon);
+            editIcon.addEventListener("click", () => {
+              let input = document.createElement("input");
+              input.setAttribute("type", "text");
+              input.setAttribute("name", "name");
+              input.setAttribute("aria-label", "name");
+              input.setAttribute("autocomplete", "off");
+              input.setAttribute("placeholder", "Edit book");
+              li.appendChild(input);
+              input.addEventListener("keyup", (e) => {
+                if (e.key === "Enter") {
+                  fetch(`/api/${index}`, {
+                    method: "PUT",
+                    headers: {
+                      "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ name: input.value }),
+                  })
+                    .then((res) => res.json())
+                    .then((data) => console.log(data))
+                    .then(() => location.reload());
+                }
+              });
+            });
+          });
+        })
+        .catch((err) => console.log(err));
+    </script>
+  </body>
+</html>

@@ -1,0 +1,21 @@
+<h1>{{title}}</h1>
+
+<form id="form">
+  <input type="text" aria-label="username" placeholder="User" />
+  <input type="password" aria-label="password" placeholder="Password" />
+  <div>{{error}}</div>
+  <button type="submit">Submit</button>
+</form>
+
+<div class="grid">
+  <a href="/register">Register Now</a>
+</div>
+
+<script>
+  document.querySelector('#form').addEventListener('submit', (e) => {
+  e.preventDefault(); fetch('/api/login', { method: 'POST', headers: {
+  'Content-Type': 'application/json' }, body: JSON.stringify({ username:
+  document.querySelector('input[aria-label="username"]').value, password:
+  document.querySelector('input[aria-label="password"]').value })})
+
+</script>
