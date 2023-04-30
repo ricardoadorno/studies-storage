@@ -1,3 +1,0 @@
-- redux/toolkit
-
-- todo app
